@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-torriden-50: #e6f4ff;
+  --color-torriden-100: #bae0ff;
+  --color-torriden-200: #8bd0ff;
+  --color-torriden-500: #00A3FF;
+  --color-torriden-600: #0082cc;
+  --color-torriden-700: #006699;
+  --color-torriden-900: #00334d;
+  --font-sans: 'Pretendard', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+}
+
+.product-3d-canvas {
+  touch-action: none;
+  cursor: grab;
+}
+
+.product-3d-canvas:active {
+  cursor: grabbing;
+}
+
+.game-3d-canvas {
+  touch-action: none;
+  cursor: pointer;
+}
+
+@keyframes twinklePop {
+  0% {
+    transform: scale(0.4) rotate(-8deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-twinkle-pop {
+  animation: twinklePop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes toastSlideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-toast-in {
+  animation: toastSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

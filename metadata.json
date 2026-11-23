@@ -1,0 +1,6 @@
+{
+  "name": "토리든 다이브인 저분자 히알루론산 세럼",
+  "description": "5D 복합 저분자 히알루론산 3초 속보습 세럼 — 3D 제품 뷰어 및 스킨케어 미니게임 체험 웹페이지",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

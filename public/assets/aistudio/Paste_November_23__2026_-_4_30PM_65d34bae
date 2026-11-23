@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토리든 다이브인 저분자 히알루론산 세럼</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        torriden: {
+                            50: '#e6f4ff',
+                            100: '#bae0ff',
+                            500: '#00A3FF',
+                            600: '#0082cc',
+                            700: '#006699',
+                            900: '#00334d'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Pretendard', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Pretendard -->
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+        #product-3d-canvas {
+            touch-action: none;
+            cursor: grab;
+        }
+        #product-3d-canvas:active {
+            cursor: grabbing;
+        }
+        #game-3d-canvas {
+            touch-action: none;
+            cursor: pointer;
+        }
+        @keyframes twinklePop {
+            0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+            60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .animate-twinkle-pop {
+            animation: twinklePop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased selection:bg-torriden-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Official Torriden Brand Mark -->
+            <a href="#hero" class="flex items-center space-x-2.5 group" aria-label="토리든 공식 브랜드 홈">
+                <svg class="h-8 w-auto" viewBox="0 0 186 38" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Torriden 공식 로고">
+                    <!-- Torriden Iconic Square Frame Symbol -->
+                    <rect x="2" y="3" width="32" height="32" rx="4" stroke="#00A3FF" stroke-width="2.6"/>
+                    <rect x="7.5" y="8.5" width="21" height="21" rx="2" stroke="#bae0ff" stroke-width="1.4"/>
+                    <circle cx="18" cy="19" r="4.2" fill="#00A3FF"/>
+                    <!-- Official Torriden Wordmark -->
+                    <text x="44" y="27.5" fill="#090D16" font-family="Pretendard, Inter, -apple-system, sans-serif" font-size="25" font-weight="800" letter-spacing="-0.8">Torriden</text>
+                </svg>
+                <span class="hidden sm:inline-block h-4 w-px bg-gray-200"></span>
+                <span class="text-[11px] uppercase tracking-[0.2em] text-torriden-600 font-bold hidden sm:inline-block">DIVE IN</span>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-7 text-sm font-medium text-gray-600">
+                <a href="#hero" class="hover:text-torriden-500 transition-colors">3D 제품보기</a>
+                <a href="#game" class="hover:text-torriden-500 transition-colors font-bold text-torriden-600">3D 미니게임</a>
+                <a href="#empathy" class="hover:text-torriden-500 transition-colors">피부고민</a>
+                <a href="#features" class="hover:text-torriden-500 transition-colors">핵심성분</a>
+                <a href="#proof" class="hover:text-torriden-500 transition-colors">어워드&후기</a>
+            </nav>
+
+            <div class="flex items-center space-x-2.5">
+                <button onclick="openProductsModal()" class="hidden sm:inline-flex items-center space-x-1.5 bg-white hover:bg-torriden-50 text-gray-700 hover:text-torriden-600 border border-gray-200 hover:border-torriden-200 font-semibold px-4 py-2 rounded-full text-xs sm:text-sm transition-all">
+                    <span>다른 제품 보러가기</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <button onclick="openModal()" class="bg-torriden-500 hover:bg-torriden-600 text-white font-medium px-5 py-2.5 rounded-full text-sm shadow-lg shadow-torriden-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+                    구매하기
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- 1. Hero Section (3D Product Viewer) -->
+        <section id="hero" class="relative pt-28 pb-20 md:pt-36 md:pb-28 bg-gradient-to-b from-torriden-50/50 via-white to-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6 text-center md:text-left">
+                        <div class="inline-flex items-center space-x-2 bg-torriden-100 text-torriden-700 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
+                            <span>올영 1위* 저분자 히알루론산 세럼</span>
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                            피부가 마시는<br>
+                            가장 깊은 수분,<br>
+                            <span class="text-torriden-500">3초 속보습</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 max-w-lg mx-auto md:mx-0">
+                            속당김 없이 촘촘하게 채워지는 5D 복합 저분자 히알루론산의 청량한 수분 진정 솔루션을 3D로 직접 살펴보고 체험해보세요.
+                        </p>
+                        <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-3 pt-4">
+                            <button onclick="openModal()" class="w-full sm:w-auto bg-torriden-500 hover:bg-torriden-600 text-white font-semibold px-7 py-4 rounded-xl shadow-xl shadow-torriden-500/30 transition-all transform hover:-translate-y-1 text-base">
+                                지금 바로 구매하기
+                            </button>
+                            <a href="#game" class="w-full sm:w-auto bg-torriden-50 text-torriden-700 hover:bg-torriden-100 font-bold px-6 py-4 rounded-xl border border-torriden-200 transition-all text-center flex items-center justify-center space-x-2">
+                                <span>💧</span>
+                                <span>3D 세럼 바르기 게임</span>
+                            </a>
+                            <button onclick="openProductsModal()" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 hover:text-torriden-600 font-bold px-6 py-4 rounded-xl border border-gray-200 hover:border-torriden-300 shadow-sm transition-all flex items-center justify-center space-x-2">
+                                <span>토리든의 다른 제품 보러가기</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive 3D Product Viewer -->
+                    <div class="relative flex justify-center">
+                        <div class="absolute w-80 h-80 bg-torriden-100 rounded-full blur-3xl -z-10 opacity-70 animate-pulse"></div>
+                        <div class="relative w-full max-w-md aspect-[4/5] bg-gradient-to-b from-[#f4f6f8] via-[#eef3f7] to-[#e6edf3] rounded-3xl shadow-2xl border border-white/80 overflow-hidden">
+                            <!-- Top Badges -->
+                            <div class="absolute top-4 left-4 z-10 flex items-center space-x-1.5 bg-white/85 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-torriden-600 shadow-sm pointer-events-none">
+                                <span class="w-2 h-2 rounded-full bg-torriden-500 animate-ping"></span>
+                                <span>3D PRODUCT VIEW</span>
+                            </div>
+                            <div class="absolute top-4 right-4 z-10 bg-white/85 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-torriden-700 shadow-sm pointer-events-none">
+                                50ml / 1.69 fl. oz.
+                            </div>
+
+                            <!-- 3D Canvas Container -->
+                            <div id="viewer-container" class="w-full h-full relative">
+                                <div id="viewer-loading" class="absolute inset-0 flex flex-col items-center justify-center text-torriden-700 text-sm font-medium bg-white/40 backdrop-blur-sm z-20 transition-opacity duration-300">
+                                    <div class="w-8 h-8 border-4 border-torriden-200 border-t-torriden-500 rounded-full animate-spin mb-2"></div>
+                                    <span>3D 제품 불러오는 중...</span>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Controls Bar -->
+                            <div class="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-2">
+                                <div class="bg-white/85 backdrop-blur-md px-3 py-1.5 rounded-full text-[11px] font-semibold text-gray-600 shadow-sm pointer-events-none flex items-center space-x-1">
+                                    <svg class="w-3.5 h-3.5 text-torriden-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <span>드래그 회전 · 휠 확대</span>
+                                </div>
+                                <div class="flex items-center space-x-1.5">
+                                    <button id="btn-toggle-cap" type="button" class="bg-white/90 hover:bg-torriden-500 hover:text-white text-torriden-700 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors">
+                                        스포이드 열기
+                                    </button>
+                                    <button id="btn-toggle-rotate" type="button" class="bg-white/90 hover:bg-torriden-500 hover:text-white text-gray-700 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors">
+                                        자동회전 ON
+                                    </button>
+                                    <button id="btn-reset-view" type="button" class="bg-white/90 hover:bg-gray-900 hover:text-white text-gray-700 text-[11px] font-bold px-2.5 py-1.5 rounded-full shadow-sm transition-colors">
+                                        초기화
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Interactive 3D Skincare Mini-Game Section -->
+        <section id="game" class="py-20 bg-gradient-to-b from-white via-torriden-50/40 to-gray-50">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <span class="inline-block bg-torriden-100 text-torriden-700 font-bold text-xs tracking-widest uppercase px-3.5 py-1 rounded-full mb-3">
+                        3D SKINCARE MINI GAME
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+                        직접 뚜껑을 열고 <span class="text-torriden-500">촉촉한 수분</span>을 채워보세요!
+                    </h2>
+                    <p class="text-gray-600 mt-3 max-w-xl mx-auto text-sm sm:text-base">
+                        먼저 토리든 세럼의 뚜껑을 클릭해 연 다음, 눈과 입술을 피해 웃는 얼굴 구석구석 세럼을 발라주세요.
+                    </p>
+                </div>
+
+                <!-- Game Cabinet -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- 3D Game Stage -->
+                    <div class="lg:col-span-8 relative bg-gradient-to-b from-[#dbeeff] via-[#eef7ff] to-[#f8fbff] rounded-3xl shadow-2xl border-2 border-white overflow-hidden min-h-[480px] sm:min-h-[560px]">
+                        <!-- Top HUD -->
+                        <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+                            <div id="game-step-badge" class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-md border border-torriden-100 flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-torriden-500 animate-pulse"></span>
+                                <span id="game-step-text" class="text-xs sm:text-sm font-bold text-gray-800">
+                                    STEP 1. 오른쪽 아래 세럼 뚜껑을 클릭해서 열어주세요!
+                                </span>
+                            </div>
+
+                            <div class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-md border border-torriden-100 flex items-center space-x-3">
+                                <span class="text-xs font-bold text-gray-500">수분 충전</span>
+                                <div class="w-24 sm:w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                    <div id="game-progress-bar" class="h-full bg-gradient-to-r from-torriden-500 to-cyan-400 rounded-full transition-all duration-150" style="width: 0%;"></div>
+                                </div>
+                                <span id="game-progress-text" class="text-xs font-black text-torriden-600 w-9 text-right">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Warning Toast (Eyes / Lips) -->
+                        <div id="game-warning-toast" class="absolute top-20 left-1/2 -translate-x-1/2 z-30 bg-amber-500 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap">
+                            ⚠️ 눈과 입술은 피해서 발라주세요!
+                        </div>
+
+                        <!-- 3D Canvas Host -->
+                        <div id="game-container" class="w-full h-full min-h-[480px] sm:min-h-[560px] relative"></div>
+
+                        <!-- Step 1 Floating Hint on Bottle -->
+                        <div id="cap-click-hint" class="absolute bottom-20 right-6 sm:right-10 z-20 pointer-events-none animate-bounce">
+                            <div class="bg-torriden-500 text-white text-xs font-extrabold px-3.5 py-2 rounded-full shadow-lg">
+                                👇 여기 뚜껑 클릭!
+                            </div>
+                        </div>
+
+                        <!-- Victory Overlay: "Twinkle!" -->
+                        <div id="game-win-overlay" class="absolute inset-0 z-40 bg-torriden-900/35 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+                            <div id="game-win-card" class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-2 border-torriden-200">
+                                <div class="text-4xl mb-2">✨💧✨</div>
+                                <div class="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-torriden-500 via-cyan-400 to-blue-600 bg-clip-text text-transparent mb-3">
+                                    Twinkle!
+                                </div>
+                                <p class="text-gray-800 font-bold text-lg mb-1">속보습 100% 충전 완료!</p>
+                                <p class="text-gray-500 text-xs sm:text-sm mb-6 leading-relaxed">
+                                    눈과 입술을 피해 얼굴 구석구석<br>토리든 다이브인 세럼을 완벽하게 발랐어요!
+                                </p>
+                                <div class="flex space-x-2.5">
+                                    <button id="btn-game-replay" type="button" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-xl text-sm transition-colors">
+                                        다시 하기
+                                    </button>
+                                    <button onclick="openModal()" type="button" class="flex-1 bg-torriden-500 hover:bg-torriden-600 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-torriden-500/30 transition-colors">
+                                        제품 구매하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Status & Checklist Panel -->
+                    <div class="lg:col-span-4 bg-white rounded-3xl p-6 sm:p-7 shadow-xl border border-gray-100 flex flex-col justify-between space-y-6">
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-extrabold text-gray-900">미션 체크리스트</h3>
+                                <button id="btn-game-reset" type="button" class="text-xs font-bold text-gray-500 hover:text-torriden-600 bg-gray-100 hover:bg-torriden-50 px-3 py-1.5 rounded-full transition-colors">
+                                    게임 초기화
+                                </button>
+                            </div>
+
+                            <!-- Step Progress List -->
+                            <div class="space-y-2.5 text-sm">
+                                <div id="chk-cap" class="flex items-center justify-between p-3 rounded-2xl bg-torriden-50/70 border border-torriden-100 transition-colors">
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="chk-icon w-6 h-6 rounded-full bg-white text-torriden-500 font-bold text-xs flex items-center justify-center shadow-sm">1</span>
+                                        <span class="font-bold text-gray-800">세럼 뚜껑 열기</span>
+                                    </div>
+                                    <span class="chk-status text-xs font-bold text-torriden-500">대기중</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2.5">얼굴 부위별 세럼 도포 (눈·입술 제외)</p>
+                                <div class="grid grid-cols-2 gap-2.5 text-xs">
+                                    <div id="zone-forehead" class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                                        <span class="font-semibold text-gray-700">이마</span>
+                                        <span class="zone-badge text-gray-400 font-bold">0%</span>
+                                    </div>
+                                    <div id="zone-nose" class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                                        <span class="font-semibold text-gray-700">콧등</span>
+                                        <span class="zone-badge text-gray-400 font-bold">0%</span>
+                                    </div>
+                                    <div id="zone-leftCheek" class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                                        <span class="font-semibold text-gray-700">왼쪽 볼</span>
+                                        <span class="zone-badge text-gray-400 font-bold">0%</span>
+                                    </div>
+                                    <div id="zone-rightCheek" class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                                        <span class="font-semibold text-gray-700">오른쪽 볼</span>
+                                        <span class="zone-badge text-gray-400 font-bold">0%</span>
+                                    </div>
+                                    <div id="zone-chin" class="col-span-2 flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                                        <span class="font-semibold text-gray-700">턱 & 턱선</span>
+                                        <span class="zone-badge text-gray-400 font-bold">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-torriden-50 rounded-2xl p-4 text-xs text-torriden-900 space-y-1.5 border border-torriden-100">
+                            <p class="font-extrabold text-torriden-700">💡 플레이 팁</p>
+                            <p class="text-gray-600 leading-relaxed">
+                                뚜껑을 연 뒤 마우스(또는 손가락)를 누른 채로 얼굴 위를 천천히 문질러 보세요. 파란 세럼 방울이 얼굴에 발리며 피부가 반짝이는 물광으로 변합니다!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Problem & Empathy Section -->
+        <section id="empathy" class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="text-torriden-500 font-bold text-sm tracking-widest uppercase">SKIN CONCERN</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2 mb-4">
+                    혹시 이런 피부 고민을 가지고 계신가요?
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-12">
+                    아무리 바깥에 크림을 덧발라도 속에서부터 느껴지는 건조함과 들뜨는 메이크업, 원인은 바로 '진짜 속보습'의 부족입니다.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-torriden-50 rounded-full flex items-center justify-center text-torriden-500 mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">속건조로 인한 답답한 당김</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            세안 후 물기를 닦자마자 찾아오는 심한 당김 현상으로 피부가 숨쉬기 답답하신 분
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-torriden-50 rounded-full flex items-center justify-center text-torriden-500 mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">들뜨고 밀리는 메이크업</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            기초를 탄탄히 발랐다고 생각했는데도 오후만 되면 화장이 들뜨고 각질이 부각되는 분
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-torriden-50 rounded-full flex items-center justify-center text-torriden-500 mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">예민하고 쉽게 지치는 피부</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            작은 외부 자극에도 쉽게 붉어지고 편안한 진정과 수분 충전이 동시에 필요한 분
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Core Features Section -->
+        <section id="features" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-torriden-500 font-bold text-sm tracking-widest uppercase">CORE FEATURES</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2 mb-4">
+                        토리든 다이브인만의 3가지 핵심 강점
+                    </h2>
+                    <p class="text-gray-600 max-w-xl mx-auto">
+                        피부 깊숙이 스며드는 촘촘한 수분 과학으로 놀라운 변화를 선사합니다.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-torriden-50/40 border border-torriden-100/60 p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:bg-white group">
+                        <div class="w-14 h-14 bg-torriden-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl mb-6 shadow-md shadow-torriden-500/20 group-hover:scale-110 transition-transform">
+                            01
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">5D 복합 저분자 히알루론산</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            크기가 다른 5가지 고·중·저분자 히알루론산이 피부 틈새마다 촘촘하게 수분을 공급하여 겉과 속을 동시에 채워줍니다.
+                        </p>
+                    </div>
+                    <div class="bg-torriden-50/40 border border-torriden-100/60 p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:bg-white group">
+                        <div class="w-14 h-14 bg-torriden-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl mb-6 shadow-md shadow-torriden-500/20 group-hover:scale-110 transition-transform">
+                            02
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">D-판테놀 & 알란토인 진정</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            예민해진 피부를 편안하게 다독여주는 판테놀과 알란토인 성분이 함유되어 자극받은 피부 장벽을 건강하게 케어합니다.
+                        </p>
+                    </div>
+                    <div class="bg-torriden-50/40 border border-torriden-100/60 p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:bg-white group">
+                        <div class="w-14 h-14 bg-torriden-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl mb-6 shadow-md shadow-torriden-500/20 group-hover:scale-110 transition-transform">
+                            03
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">산뜻한 파란빛 수분 제형</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            끈적임이나 밀림 없이 산뜻하게 흡수되는 워터리한 제형으로 메이크업 전 단계에서도 완벽한 밀착력을 자랑합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Social Proof Section -->
+        <section id="proof" class="py-20 bg-gradient-to-b from-white to-torriden-50/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-torriden-500 font-bold text-sm tracking-widest uppercase">SOCIAL PROOF</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2 mb-4">
+                        수많은 소비자가 증명하는 다이브인 세럼
+                    </h2>
+                    <p class="text-gray-600 max-w-xl mx-auto">
+                        어워드 다관왕과 압도적인 만족도가 제품의 우수성을 말해줍니다.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="text-3xl sm:text-4xl font-black text-torriden-500 mb-2">올영 1위</div>
+                        <p class="text-gray-600 text-xs sm:text-sm">올리브영 어워즈 에센스 부문 수상</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="text-3xl sm:text-4xl font-black text-torriden-500 mb-2">99%</div>
+                        <p class="text-gray-600 text-xs sm:text-sm">속보습 개선 만족도</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="text-3xl sm:text-4xl font-black text-torriden-500 mb-2">화해 3관왕</div>
+                        <p class="text-gray-600 text-xs sm:text-sm">뷰티 어워드 에센스 1위</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="text-3xl sm:text-4xl font-black text-torriden-500 mb-2">비건 인증</div>
+                        <p class="text-gray-600 text-xs sm:text-sm">한국 비건 정식 인증 완료</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Banner -->
+        <section class="py-16 bg-torriden-500 text-white">
+            <div class="max-w-5xl mx-auto px-4 text-center space-y-6">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                    당신의 피부에 닿는 가장 순수한 수분 충전
+                </h2>
+                <p class="text-torriden-100 text-base sm:text-lg max-w-2xl mx-auto">
+                    지금 바로 토리든 다이브인 세럼과 함께 3초 속보습의 놀라운 변화를 시작해보세요.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                    <button onclick="openModal()" class="w-full sm:w-auto bg-white text-torriden-600 font-bold px-8 py-4 rounded-xl shadow-xl hover:bg-torriden-50 transition-all transform hover:-translate-y-1 text-base">
+                        다이브인 세럼 구매하기
+                    </button>
+                    <button onclick="openProductsModal()" class="w-full sm:w-auto bg-torriden-600/80 hover:bg-torriden-700 text-white border border-white/30 font-bold px-8 py-4 rounded-xl transition-all transform hover:-translate-y-1 text-base flex items-center justify-center space-x-2">
+                        <span>토리든의 다른 제품 보러가기</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+            <div class="text-center md:text-left">
+                <div class="inline-flex items-center space-x-2">
+                    <svg class="h-7 w-auto" viewBox="0 0 186 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="3" width="32" height="32" rx="4" stroke="#00A3FF" stroke-width="2.6"/>
+                        <rect x="7.5" y="8.5" width="21" height="21" rx="2" stroke="#006699" stroke-width="1.4"/>
+                        <circle cx="18" cy="19" r="4.2" fill="#00A3FF"/>
+                        <text x="44" y="27.5" fill="#FFFFFF" font-family="Pretendard, Inter, -apple-system, sans-serif" font-size="25" font-weight="800" letter-spacing="-0.8">Torriden</text>
+                    </svg>
+                </div>
+                <p class="text-xs tracking-widest text-gray-400 mt-2 uppercase font-semibold">DEEP DIVE INTO YOUR SKIN · YOUR SKIN IS OUR PLANET</p>
+            </div>
+            <div class="text-xs text-gray-500 text-center md:text-right space-y-1">
+                <p>&copy; 2026 Torriden Inc. All Rights Reserved.</p>
+                <p>클린뷰티 & 지속 가능한 수분 솔루션</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Modal for Purchase / Notification -->
+    <div id="purchaseModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modalContent" class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300">
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-torriden-100 text-torriden-500 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                    💧
+                </div>
+                <h3 class="text-2xl font-extrabold text-gray-900">토리든 다이브인 세럼</h3>
+                <p class="text-gray-600 text-sm">
+                    구매하기 버튼을 눌러주셔서 감사합니다! 안전한 결제 페이지로 이동하는 시뮬레이션 창입니다.
+                </p>
+                <div class="bg-torriden-50 p-4 rounded-2xl text-left text-xs text-gray-700 space-y-1">
+                    <p class="font-bold text-torriden-700">상품 정보:</p>
+                    <p>• 용량: 50ml 기획세트</p>
+                    <p>• 할인가: 21,000원 (무료배송)</p>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="closeModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-colors text-sm">
+                        닫기
+                    </button>
+                    <button onclick="completePurchase()" class="flex-1 bg-torriden-500 hover:bg-torriden-600 text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-lg shadow-torriden-500/20">
+                        주문 완료하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Torriden Other Products Lineup Modal -->
+    <div id="productsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div id="productsModalContent" class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <span class="inline-block bg-torriden-50 text-torriden-600 text-[11px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full mb-2">TORRIDEN LINEUP</span>
+                    <h3 class="text-2xl font-extrabold text-gray-900">토리든의 다른 제품 라인업</h3>
+                    <p class="text-sm text-gray-500 mt-1">피부 고민별 성분 중심 · 흡수 설계 솔루션을 만나보세요.</p>
+                </div>
+                <button onclick="closeProductsModal()" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center font-bold transition-colors" aria-label="닫기">
+                    ✕
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <a href="https://www.torriden.com" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-sky-100 bg-sky-50/60 hover:bg-white hover:shadow-lg hover:border-torriden-300 transition-all flex items-start space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-torriden-500 text-white flex items-center justify-center font-black text-lg shrink-0 shadow-sm">💧</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-torriden-600">5D 수분 충전</span>
+                            <span class="text-xs text-gray-400 group-hover:text-torriden-500 transition-colors">↗</span>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 mt-0.5">다이브인 수딩 크림 & 토너</h4>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">저분자 히알루론산으로 세안 직후부터 크림 단계까지 빈틈없는 수분 레이어링</p>
+                    </div>
+                </a>
+
+                <a href="https://www.torriden.com" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 hover:bg-white hover:shadow-lg hover:border-emerald-300 transition-all flex items-start space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black text-lg shrink-0 shadow-sm">🌿</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-emerald-700">5D 시카 진정</span>
+                            <span class="text-xs text-gray-400 group-hover:text-emerald-600 transition-colors">↗</span>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 mt-0.5">밸런스풀 시카 진정 세럼</h4>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">민감하고 붉어진 피부를 산뜻하게 다독여주는 T-Percent 특허 시카 케어</p>
+                    </div>
+                </a>
+
+                <a href="https://www.torriden.com" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-amber-100 bg-amber-50/60 hover:bg-white hover:shadow-lg hover:border-amber-300 transition-all flex items-start space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-400 text-white flex items-center justify-center font-black text-lg shrink-0 shadow-sm">🛡️</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-amber-700">5D 세라마이드 장벽</span>
+                            <span class="text-xs text-gray-400 group-hover:text-amber-600 transition-colors">↗</span>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 mt-0.5">솔리드인 세라마이드 크림</h4>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">무너진 피부 장벽을 탄탄하게 채워 깊은 보습감을 선사하는 고보습 장벽 케어</p>
+                    </div>
+                </a>
+
+                <a href="https://www.torriden.com" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-rose-100 bg-rose-50/60 hover:bg-white hover:shadow-lg hover:border-rose-300 transition-all flex items-start space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-400 text-white flex items-center justify-center font-black text-lg shrink-0 shadow-sm">✨</div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-rose-600">5D 콜라겐 · 비타C</span>
+                            <span class="text-xs text-gray-400 group-hover:text-rose-500 transition-colors">↗</span>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 mt-0.5">셀메이징 탄력 & 잡티 앰플</h4>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">저분자 콜라겐 모공 탄력 및 5가지 비타민C 브라이트닝 기능성 케어</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="closeProductsModal()" class="sm:w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 rounded-xl transition-colors text-sm">
+                    닫기
+                </button>
+                <a href="https://www.torriden.com" target="_blank" rel="noopener noreferrer" class="sm:w-2/3 bg-torriden-500 hover:bg-torriden-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm shadow-lg shadow-torriden-500/25 flex items-center justify-center space-x-2">
+                    <span>토리든 공식몰에서 전체 제품 보기</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Modal Interactions -->
+    <script>
+        const modal = document.getElementById('purchaseModal');
+        const modalContent = document.getElementById('modalContent');
+        const productsModal = document.getElementById('productsModal');
+        const productsModalContent = document.getElementById('productsModalContent');
+
+        function openModal() {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+        }
+
+        function openProductsModal() {
+            productsModal.classList.remove('opacity-0', 'pointer-events-none');
+            productsModalContent.classList.remove('scale-95');
+            productsModalContent.classList.add('scale-100');
+        }
+
+        function closeProductsModal() {
+            productsModal.classList.add('opacity-0', 'pointer-events-none');
+            productsModalContent.classList.remove('scale-100');
+            productsModalContent.classList.add('scale-95');
+        }
+
+        function completePurchase() {
+            closeModal();
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 z-50 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all transform translate-y-20 opacity-0';
+            toast.innerHTML = `
+                <span class="text-torriden-500 font-bold">✓</span>
+                <span class="text-sm">주문이 성공적으로 접수되었습니다! 감사합니다.</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+            }, 100);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        productsModal.addEventListener('click', (e) => {
+            if (e.target === productsModal) closeProductsModal();
+        });
+    </script>
+
+    <!-- 3D Product Model Builder + Viewer + 3D Skincare Game -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+        // =========================================================
+        // 공통 함수: 사실적인 비율의 토리든 다이브인 세럼 3D 병 생성
+        // =========================================================
+        function createTorridenBottle() {
+            const productGroup = new THREE.Group();
+
+            // 1) 외곽 유리병
+            const bottleRadius = 0.84;
+            const bottlePoints = [
+                new THREE.Vector2(0.0, 0.0),
+                new THREE.Vector2(0.68, 0.0),
+                new THREE.Vector2(0.79, 0.04),
+                new THREE.Vector2(0.835, 0.14),
+                new THREE.Vector2(bottleRadius, 0.24),
+                new THREE.Vector2(bottleRadius, 1.44),
+                new THREE.Vector2(0.82, 1.58),
+                new THREE.Vector2(0.72, 1.72),
+                new THREE.Vector2(0.52, 1.84),
+                new THREE.Vector2(0.39, 1.90),
+                new THREE.Vector2(0.39, 2.06),
+                new THREE.Vector2(0.35, 2.06)
+            ];
+            const bottleGeo = new THREE.LatheGeometry(bottlePoints, 64);
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xf4fbff,
+                metalness: 0.0,
+                roughness: 0.05,
+                transmission: 0.92,
+                transparent: true,
+                opacity: 1,
+                ior: 1.52,
+                thickness: 0.35,
+                reflectivity: 0.9,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.04,
+                depthWrite: false
+            });
+            const bottleMesh = new THREE.Mesh(bottleGeo, glassMat);
+            bottleMesh.renderOrder = 3;
+            bottleMesh.castShadow = true;
+            productGroup.add(bottleMesh);
+
+            // 도톰한 유리 바닥 굴절 링
+            const basePoints = [
+                new THREE.Vector2(0.0, 0.02),
+                new THREE.Vector2(0.72, 0.02),
+                new THREE.Vector2(0.76, 0.14),
+                new THREE.Vector2(0.70, 0.19),
+                new THREE.Vector2(0.0, 0.18)
+            ];
+            const baseGeo = new THREE.LatheGeometry(basePoints, 48);
+            const baseGlassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xdff4ff,
+                roughness: 0.08,
+                transmission: 0.85,
+                transparent: true,
+                ior: 1.55,
+                thickness: 0.5,
+                depthWrite: false
+            });
+            const baseMesh = new THREE.Mesh(baseGeo, baseGlassMat);
+            baseMesh.renderOrder = 2;
+            productGroup.add(baseMesh);
+
+            // 2) 내부 파란빛 세럼 액체
+            const liquidPoints = [
+                new THREE.Vector2(0.0, 0.17),
+                new THREE.Vector2(0.73, 0.17),
+                new THREE.Vector2(0.765, 0.24),
+                new THREE.Vector2(0.765, 1.44),
+                new THREE.Vector2(0.74, 1.56),
+                new THREE.Vector2(0.65, 1.65),
+                new THREE.Vector2(0.0, 1.64)
+            ];
+            const liquidGeo = new THREE.LatheGeometry(liquidPoints, 64);
+            const liquidMat = new THREE.MeshPhysicalMaterial({
+                color: 0x99dcff,
+                emissive: 0x0c4a6e,
+                emissiveIntensity: 0.08,
+                roughness: 0.06,
+                metalness: 0.0,
+                transmission: 0.72,
+                transparent: true,
+                opacity: 0.88,
+                ior: 1.34,
+                thickness: 1.2,
+                attenuationColor: new THREE.Color(0x66ccff),
+                attenuationDistance: 1.8,
+                depthWrite: false
+            });
+            const liquidMesh = new THREE.Mesh(liquidGeo, liquidMat);
+            liquidMesh.renderOrder = 2;
+            productGroup.add(liquidMesh);
+
+            // 3) 세럼 속 기포
+            const bubblesGroup = new THREE.Group();
+            const bubbleGeo = new THREE.SphereGeometry(1, 16, 16);
+            const bubbleMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                roughness: 0.02,
+                transmission: 0.95,
+                transparent: true,
+                ior: 1.0,
+                clearcoat: 1.0
+            });
+            const bubbleSpecs = [
+                { x: -0.27, y: 1.60, z: 0.28, r: 0.044 },
+                { x: -0.20, y: 1.62, z: 0.31, r: 0.026 },
+                { x: -0.33, y: 1.57, z: 0.23, r: 0.022 },
+                { x: 0.22, y: 1.61, z: -0.24, r: 0.032 },
+                { x: 0.09, y: 1.32, z: 0.12, r: 0.015 },
+                { x: -0.11, y: 1.20, z: 0.09, r: 0.012 },
+                { x: 0.08, y: 1.06, z: -0.07, r: 0.016 },
+                { x: -0.06, y: 0.88, z: 0.14, r: 0.013 },
+                { x: 0.12, y: 0.76, z: 0.08, r: 0.011 },
+                { x: -0.09, y: 0.60, z: -0.11, r: 0.014 }
+            ];
+            bubbleSpecs.forEach((b) => {
+                const m = new THREE.Mesh(bubbleGeo, bubbleMat);
+                m.position.set(b.x, b.y, b.z);
+                m.scale.setScalar(b.r);
+                m.renderOrder = 1;
+                bubblesGroup.add(m);
+            });
+            productGroup.add(bubblesGroup);
+
+            // 4) 라벨 텍스처
+            const labelRadius = bottleRadius + 0.005;
+            const labelHeight = 1.18;
+            const circumference = 2 * Math.PI * labelRadius;
+            const aspect = circumference / labelHeight;
+
+            function createLabelTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.height = 560;
+                canvas.width = Math.round(canvas.height * aspect);
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width * 0.5;
+
+                ctx.save();
+                ctx.translate(cx, 155);
+                ctx.scale(0.84, 1.32);
+                ctx.fillStyle = '#090d16';
+                ctx.font = '800 84px "Pretendard", "Inter", Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Torriden', 0, 0);
+                ctx.restore();
+
+                ctx.save();
+                ctx.fillStyle = '#111827';
+                ctx.font = '600 28px "Pretendard", "Inter", Arial, sans-serif';
+                ctx.textBaseline = 'middle';
+
+                ctx.save();
+                ctx.translate(cx - 155, 232);
+                ctx.scale(0.92, 1.15);
+                ctx.textAlign = 'left';
+                ctx.fillText('DIVE IN', 0, 0);
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(cx + 155, 232);
+                ctx.scale(0.92, 1.15);
+                ctx.textAlign = 'right';
+                ctx.fillText('Serum', 0, 0);
+                ctx.restore();
+                ctx.restore();
+
+                ctx.save();
+                ctx.fillStyle = '#111827';
+                ctx.font = '600 18px "Pretendard", "Inter", Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Low Molecular', cx, 474);
+                ctx.fillText('Hyaluronic Acid', cx, 498);
+                ctx.restore();
+
+                const drawBackText = (bx) => {
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+                    ctx.textAlign = 'center';
+                    ctx.font = 'bold 24px "Pretendard", Arial, sans-serif';
+                    ctx.fillText('다이브인 저분자 히알루론산 세럼', bx, 165);
+
+                    ctx.font = '500 17px "Pretendard", Arial, sans-serif';
+                    ctx.fillText('5D 복합 저분자 히알루론산 & D-판테놀', bx, 212);
+                    ctx.fillText('피부 속까지 촘촘하게 채워주는 수분 진정 세럼', bx, 240);
+
+                    ctx.font = '600 16px "Pretendard", Arial, sans-serif';
+                    ctx.fillText('50 ml / 1.69 fl. oz.   MADE IN KOREA', bx, 455);
+                    ctx.fillText('VEGAN CERTIFIED  ·  TORRIDEN', bx, 485);
+                };
+                drawBackText(0);
+                drawBackText(canvas.width);
+
+                const tex = new THREE.CanvasTexture(canvas);
+                tex.anisotropy = 8;
+                tex.needsUpdate = true;
+                return tex;
+            }
+
+            const labelGeo = new THREE.CylinderGeometry(labelRadius, labelRadius, labelHeight, 64, 1, true);
+            labelGeo.rotateY(-Math.PI / 2);
+            const labelMat = new THREE.MeshBasicMaterial({
+                map: createLabelTexture(),
+                transparent: true,
+                depthWrite: false,
+                side: THREE.FrontSide
+            });
+            const labelMesh = new THREE.Mesh(labelGeo, labelMat);
+            labelMesh.position.y = 0.84;
+            labelMesh.renderOrder = 4;
+            productGroup.add(labelMesh);
+
+            // 5) 스포이드 캡 & 내부 유리 피펫 그룹
+            const dropperGroup = new THREE.Group();
+            productGroup.add(dropperGroup);
+
+            const pipettePoints = [
+                new THREE.Vector2(0.0, 0.28),
+                new THREE.Vector2(0.025, 0.29),
+                new THREE.Vector2(0.055, 0.40),
+                new THREE.Vector2(0.068, 0.48),
+                new THREE.Vector2(0.068, 1.92),
+                new THREE.Vector2(0.085, 1.98)
+            ];
+            const pipetteGeo = new THREE.LatheGeometry(pipettePoints, 32);
+            const pipetteMat = new THREE.MeshPhysicalMaterial({
+                color: 0xeaf8ff,
+                roughness: 0.04,
+                transmission: 0.9,
+                transparent: true,
+                ior: 1.5,
+                thickness: 0.1,
+                depthWrite: false
+            });
+            const pipetteMesh = new THREE.Mesh(pipetteGeo, pipetteMat);
+            pipetteMesh.renderOrder = 1;
+            dropperGroup.add(pipetteMesh);
+
+            const innerSerumGeo = new THREE.CylinderGeometry(0.044, 0.040, 0.88, 24);
+            const innerSerumMat = new THREE.MeshPhysicalMaterial({
+                color: 0x8ad7ff,
+                roughness: 0.05,
+                transmission: 0.7,
+                transparent: true,
+                opacity: 0.85,
+                depthWrite: false
+            });
+            const innerSerumMesh = new THREE.Mesh(innerSerumGeo, innerSerumMat);
+            innerSerumMesh.position.y = 0.90;
+            innerSerumMesh.renderOrder = 1;
+            dropperGroup.add(innerSerumMesh);
+
+            const capPoints = [
+                new THREE.Vector2(0.39, 1.90),
+                new THREE.Vector2(0.46, 1.90),
+                new THREE.Vector2(0.465, 2.46),
+                new THREE.Vector2(0.43, 2.51),
+                new THREE.Vector2(0.24, 2.52)
+            ];
+            const capGeo = new THREE.LatheGeometry(capPoints, 64);
+            const capMat = new THREE.MeshPhysicalMaterial({
+                color: 0xf9fbfd,
+                roughness: 0.22,
+                metalness: 0.02,
+                clearcoat: 0.7,
+                clearcoatRoughness: 0.12
+            });
+            const capMesh = new THREE.Mesh(capGeo, capMat);
+            capMesh.castShadow = true;
+            dropperGroup.add(capMesh);
+
+            const ribGeo = new THREE.CylinderGeometry(0.011, 0.011, 0.52, 8);
+            const ribMat = new THREE.MeshStandardMaterial({ color: 0xedf2f7, roughness: 0.3 });
+            const ribCount = 44;
+            for (let i = 0; i < ribCount; i++) {
+                const angle = (i / ribCount) * Math.PI * 2;
+                const rib = new THREE.Mesh(ribGeo, ribMat);
+                rib.position.set(Math.cos(angle) * 0.463, 2.18, Math.sin(angle) * 0.463);
+                dropperGroup.add(rib);
+            }
+
+            const collarGeo = new THREE.CylinderGeometry(0.275, 0.295, 0.06, 48);
+            const collarMesh = new THREE.Mesh(collarGeo, capMat);
+            collarMesh.position.y = 2.53;
+            dropperGroup.add(collarMesh);
+
+            const bulbPoints = [
+                new THREE.Vector2(0.245, 2.53),
+                new THREE.Vector2(0.23, 2.66),
+                new THREE.Vector2(0.215, 2.98),
+                new THREE.Vector2(0.20, 3.10),
+                new THREE.Vector2(0.15, 3.19),
+                new THREE.Vector2(0.08, 3.23),
+                new THREE.Vector2(0.0, 3.24)
+            ];
+            const bulbGeo = new THREE.LatheGeometry(bulbPoints, 48);
+            const bulbMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                roughness: 0.32,
+                metalness: 0.0,
+                sheen: 0.4,
+                sheenColor: new THREE.Color(0xffffff)
+            });
+            const bulbMesh = new THREE.Mesh(bulbGeo, bulbMat);
+            bulbMesh.castShadow = true;
+            dropperGroup.add(bulbMesh);
+
+            return { productGroup, dropperGroup, bubblesGroup };
+        }
+
+        // =========================================================
+        // 1. HERO 3D PRODUCT VIEWER
+        // =========================================================
+        (function initProductViewer() {
+            const container = document.getElementById('viewer-container');
+            const loadingEl = document.getElementById('viewer-loading');
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(34, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0.2, 1.45, 6.6);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.1;
+            renderer.shadowMap.enabled = true;
+            renderer.domElement.id = 'product-3d-canvas';
+            container.appendChild(renderer.domElement);
+
+            const pmrem = new THREE.PMREMGenerator(renderer);
+            scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+            keyLight.position.set(4, 7, 5);
+            keyLight.castShadow = true;
+            scene.add(keyLight);
+
+            const fillLight = new THREE.DirectionalLight(0xd9f2ff, 1.2);
+            fillLight.position.set(-5, 3, 3);
+            scene.add(fillLight);
+
+            const rimLight = new THREE.DirectionalLight(0xbbe6ff, 1.8);
+            rimLight.position.set(0, 4, -5);
+            scene.add(rimLight);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.enablePan = false;
+            controls.minDistance = 3.2;
+            controls.maxDistance = 9.5;
+            controls.target.set(0, 1.25, 0);
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1.5;
+
+            const { productGroup, dropperGroup, bubblesGroup } = createTorridenBottle();
+            productGroup.rotation.y = -0.15;
+            scene.add(productGroup);
+
+            const shadowCanvas = document.createElement('canvas');
+            shadowCanvas.width = 512;
+            shadowCanvas.height = 512;
+            const sctx = shadowCanvas.getContext('2d');
+            const grad = sctx.createRadialGradient(256, 256, 30, 256, 256, 240);
+            grad.addColorStop(0, 'rgba(0, 70, 120, 0.25)');
+            grad.addColorStop(0.5, 'rgba(0, 70, 120, 0.08)');
+            grad.addColorStop(1, 'rgba(0, 70, 120, 0)');
+            sctx.fillStyle = grad;
+            sctx.fillRect(0, 0, 512, 512);
+            const shadowPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(3.4, 3.4),
+                new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false })
+            );
+            shadowPlane.rotation.x = -Math.PI / 2;
+            shadowPlane.position.y = -0.01;
+            productGroup.add(shadowPlane);
+
+            const btnToggleCap = document.getElementById('btn-toggle-cap');
+            const btnToggleRotate = document.getElementById('btn-toggle-rotate');
+            const btnResetView = document.getElementById('btn-reset-view');
+
+            let isCapOpen = false;
+            let targetCapY = 0;
+
+            btnToggleCap.addEventListener('click', () => {
+                isCapOpen = !isCapOpen;
+                targetCapY = isCapOpen ? 1.15 : 0;
+                btnToggleCap.textContent = isCapOpen ? '스포이드 닫기' : '스포이드 열기';
+            });
+
+            btnToggleRotate.addEventListener('click', () => {
+                controls.autoRotate = !controls.autoRotate;
+                btnToggleRotate.textContent = controls.autoRotate ? '자동회전 ON' : '자동회전 OFF';
+            });
+
+            btnResetView.addEventListener('click', () => {
+                camera.position.set(0.2, 1.45, 6.6);
+                controls.target.set(0, 1.25, 0);
+                productGroup.rotation.y = -0.15;
+                controls.update();
+            });
+
+            new ResizeObserver(() => {
+                if (!container.clientWidth || !container.clientHeight) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }).observe(container);
+
+            setTimeout(() => {
+                loadingEl.classList.add('opacity-0', 'pointer-events-none');
+            }, 200);
+
+            const clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+                const t = clock.getElapsedTime();
+                dropperGroup.position.y += (targetCapY - dropperGroup.position.y) * 0.08;
+                bubblesGroup.position.y = Math.sin(t * 1.4) * 0.008;
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        })();
+
+        // =========================================================
+        // 2. 3D SKINCARE MINI-GAME (웃는 얼굴 세럼 바르기 + Twinkle!)
+        // =========================================================
+        (function initSkincareGame() {
+            const container = document.getElementById('game-container');
+            const stepTextEl = document.getElementById('game-step-text');
+            const progressBarEl = document.getElementById('game-progress-bar');
+            const progressTextEl = document.getElementById('game-progress-text');
+            const warningToastEl = document.getElementById('game-warning-toast');
+            const capHintEl = document.getElementById('cap-click-hint');
+            const winOverlayEl = document.getElementById('game-win-overlay');
+            const winCardEl = document.getElementById('game-win-card');
+            const chkCapEl = document.getElementById('chk-cap');
+
+            const zoneEls = {
+                forehead: document.getElementById('zone-forehead'),
+                nose: document.getElementById('zone-nose'),
+                leftCheek: document.getElementById('zone-leftCheek'),
+                rightCheek: document.getElementById('zone-rightCheek'),
+                chin: document.getElementById('zone-chin')
+            };
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(36, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 0.25, 5.4);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.08;
+            renderer.shadowMap.enabled = true;
+            renderer.domElement.id = 'game-3d-canvas';
+            container.appendChild(renderer.domElement);
+
+            const pmrem = new THREE.PMREMGenerator(renderer);
+            scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.05).texture;
+
+            scene.add(new THREE.AmbientLight(0xfff6f0, 0.85));
+            const gKey = new THREE.DirectionalLight(0xffffff, 1.6);
+            gKey.position.set(3, 5, 5);
+            gKey.castShadow = true;
+            scene.add(gKey);
+            const gFill = new THREE.DirectionalLight(0xd9f2ff, 0.9);
+            gFill.position.set(-4, 2, 4);
+            scene.add(gFill);
+
+            // --- A. 3D 사람 캐릭터 얼굴(Head) 제작 ---
+            const characterGroup = new THREE.Group();
+            characterGroup.position.set(-0.2, 0.15, 0);
+            scene.add(characterGroup);
+
+            const texSize = 1024;
+            const skinCanvas = document.createElement('canvas');
+            skinCanvas.width = texSize;
+            skinCanvas.height = texSize;
+            const skinCtx = skinCanvas.getContext('2d');
+
+            const roughCanvas = document.createElement('canvas');
+            roughCanvas.width = 512;
+            roughCanvas.height = 512;
+            const roughCtx = roughCanvas.getContext('2d');
+
+            const skinTexture = new THREE.CanvasTexture(skinCanvas);
+            skinTexture.colorSpace = THREE.SRGBColorSpace;
+            const roughTexture = new THREE.CanvasTexture(roughCanvas);
+
+            // 얼굴 형상 조각 (미소 지을 때 볼살이 살짝 올라온 부드러운 계란형)
+            const headGeo = new THREE.SphereGeometry(1.05, 64, 64);
+            const posAttr = headGeo.attributes.position;
+            const v = new THREE.Vector3();
+            for (let i = 0; i < posAttr.count; i++) {
+                v.fromBufferAttribute(posAttr, i);
+                v.x *= 0.88;
+                v.y *= 1.12;
+                v.z *= 0.92;
+
+                if (v.y < -0.2) {
+                    const t = Math.min(1, (-0.2 - v.y) / 0.9);
+                    v.x *= 1.0 - t * 0.24;
+                    v.z *= 1.0 - t * 0.14;
+                }
+                // 웃을 때 살짝 올라온 사랑스러운 광대·볼륨
+                if (v.z > 0.2 && v.y > -0.38 && v.y < 0.26 && Math.abs(v.x) > 0.20) {
+                    v.z += 0.068 * Math.cos((v.y + 0.04) * 2.6);
+                }
+                if (v.z > 0.4 && v.y > 0.06 && v.y < 0.34 && Math.abs(v.x) > 0.16 && Math.abs(v.x) < 0.50) {
+                    v.z -= 0.032;
+                }
+                posAttr.setXYZ(i, v.x, v.y, v.z);
+            }
+            headGeo.computeVertexNormals();
+
+            const headMat = new THREE.MeshPhysicalMaterial({
+                map: skinTexture,
+                roughnessMap: roughTexture,
+                roughness: 1.0,
+                metalness: 0.0,
+                clearcoat: 0.0,
+                clearcoatRoughness: 0.12
+            });
+            const headMesh = new THREE.Mesh(headGeo, headMat);
+            headMesh.castShadow = true;
+            headMesh.receiveShadow = true;
+            characterGroup.add(headMesh);
+
+            // 오똑한 3D 코
+            const noseGeo = new THREE.SphereGeometry(0.155, 32, 32);
+            noseGeo.scale(0.85, 1.32, 1.08);
+            const noseMat = new THREE.MeshPhysicalMaterial({
+                color: 0xfad7c4,
+                roughness: 0.72,
+                clearcoat: 0.0,
+                clearcoatRoughness: 0.15
+            });
+            const noseMesh = new THREE.Mesh(noseGeo, noseMat);
+            noseMesh.position.set(0, -0.03, 0.96);
+            characterGroup.add(noseMesh);
+
+            // 목 & 어깨
+            const neckGeo = new THREE.CylinderGeometry(0.36, 0.44, 0.9, 32);
+            const neckMat = new THREE.MeshStandardMaterial({ color: 0xf6cdb7, roughness: 0.7 });
+            const neckMesh = new THREE.Mesh(neckGeo, neckMat);
+            neckMesh.position.set(0, -1.35, -0.08);
+            characterGroup.add(neckMesh);
+
+            const shoulderGeo = new THREE.SphereGeometry(0.95, 32, 24);
+            shoulderGeo.scale(1.25, 0.45, 0.75);
+            const shoulderMat = new THREE.MeshStandardMaterial({ color: 0x00A3FF, roughness: 0.65 });
+            const shoulderMesh = new THREE.Mesh(shoulderGeo, shoulderMat);
+            shoulderMesh.position.set(0, -1.85, -0.08);
+            characterGroup.add(shoulderMesh);
+
+            // 귀 (좌/우)
+            const earGeo = new THREE.SphereGeometry(0.18, 24, 24);
+            earGeo.scale(0.45, 1.1, 0.65);
+            [-0.92, 0.92].forEach((ex) => {
+                const ear = new THREE.Mesh(earGeo, neckMat);
+                ear.position.set(ex, 0.0, -0.05);
+                characterGroup.add(ear);
+            });
+
+            // 머리카락 & 헤어밴드
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0x3b2a24, roughness: 0.65 });
+            const backHairGeo = new THREE.SphereGeometry(1.08, 32, 32);
+            backHairGeo.scale(0.94, 1.14, 0.94);
+            const backHair = new THREE.Mesh(backHairGeo, hairMat);
+            backHair.position.set(0, 0.14, -0.18);
+            characterGroup.add(backHair);
+
+            const bandGeo = new THREE.TorusGeometry(0.95, 0.13, 20, 64);
+            bandGeo.scale(0.96, 1.02, 1.02);
+            const bandMat = new THREE.MeshStandardMaterial({ color: 0xbae0ff, roughness: 0.85 });
+            const bandMesh = new THREE.Mesh(bandGeo, bandMat);
+            bandMesh.position.set(0, 0.56, 0.02);
+            bandMesh.rotation.x = Math.PI / 2 - 0.52;
+            characterGroup.add(bandMesh);
+
+            // --- B. 제외 구역: 3D 눈웃음 눈 (좌/우) & 환하게 웃는 3D 입술 ---
+            const eyeHitZones = [];
+            const eyeGroups = [];
+            const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.18 });
+            const irisMat = new THREE.MeshStandardMaterial({ color: 0x2c1b18, roughness: 0.08 });
+            const lashMat = new THREE.MeshStandardMaterial({ color: 0x1f1412, roughness: 0.45 });
+
+            [-0.33, 0.33].forEach((ex) => {
+                const eyeGroup = new THREE.Group();
+                eyeGroup.position.set(ex, 0.18, 0.82);
+                eyeGroup.rotation.y = ex < 0 ? -0.26 : 0.26;
+
+                // 안구 (눈웃음에 맞춰 살짝 부드러운 반달 비율)
+                const eyeball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 24, 24), eyeWhiteMat);
+                eyeball.scale.set(1.16, 0.78, 0.54);
+                eyeGroup.add(eyeball);
+
+                // 눈동자
+                const iris = new THREE.Mesh(new THREE.SphereGeometry(0.084, 24, 24), irisMat);
+                iris.position.set(0, 0.008, 0.046);
+                iris.scale.set(1.0, 0.96, 0.5);
+                eyeGroup.add(iris);
+
+                // 반짝이는 눈 하이라이트 (생기 있는 미소)
+                const glintMain = new THREE.Mesh(new THREE.SphereGeometry(0.026, 12, 12), eyeWhiteMat);
+                glintMain.position.set(0.028, 0.032, 0.088);
+                eyeGroup.add(glintMain);
+
+                const glintSub = new THREE.Mesh(new THREE.SphereGeometry(0.013, 10, 10), eyeWhiteMat);
+                glintSub.position.set(-0.024, -0.014, 0.088);
+                eyeGroup.add(glintSub);
+
+                // 아치형 웃는 속눈썹 / 아이라인
+                const lash = new THREE.Mesh(new THREE.TorusGeometry(0.138, 0.02, 12, 28, Math.PI * 0.88), lashMat);
+                lash.position.set(0, 0.014, 0.052);
+                lash.rotation.z = Math.PI * 0.06;
+                eyeGroup.add(lash);
+
+                // 다정하게 올라간 하안검(애교살) 미소 곡선
+                const smileLidCurve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(-0.125, -0.032, 0.045),
+                    new THREE.Vector3(0, -0.048, 0.072),
+                    new THREE.Vector3(0.125, -0.032, 0.045)
+                ]);
+                const smileLid = new THREE.Mesh(
+                    new THREE.TubeGeometry(smileLidCurve, 16, 0.014, 8, false),
+                    new THREE.MeshStandardMaterial({ color: 0xf4bea6, roughness: 0.75 })
+                );
+                eyeGroup.add(smileLid);
+
+                // 부드럽게 아치형을 그린 편안한 눈썹
+                const browCurve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(-0.11, 0.195, 0.02),
+                    new THREE.Vector3(0, 0.235, 0.045),
+                    new THREE.Vector3(0.11, 0.195, 0.02)
+                ]);
+                const brow = new THREE.Mesh(
+                    new THREE.TubeGeometry(browCurve, 18, 0.021, 10, false),
+                    hairMat
+                );
+                eyeGroup.add(brow);
+
+                // Raycast 제외 판정용 투명 존
+                const eyeZone = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.20, 16, 16),
+                    new THREE.MeshBasicMaterial({ visible: false })
+                );
+                eyeZone.userData.forbidden = 'eye';
+                eyeGroup.add(eyeZone);
+                eyeHitZones.push(eyeZone);
+
+                eyeGroups.push(eyeGroup);
+                characterGroup.add(eyeGroup);
+            });
+
+            // 환하게 웃는 3D 입술 (입꼬리가 자연스럽게 올라간 스마일)
+            const lipsGroup = new THREE.Group();
+            lipsGroup.position.set(0, -0.42, 0.875);
+
+            const lipMat = new THREE.MeshPhysicalMaterial({
+                color: 0xea7a86,
+                roughness: 0.28,
+                clearcoat: 0.55
+            });
+            const smileCreaseMat = new THREE.MeshStandardMaterial({
+                color: 0xb64b5a,
+                roughness: 0.4
+            });
+
+            // 1) 올라간 입꼬리 미소 라인 (가운데가 부드럽게 내려가고 양끝이 위로 올라가는 곡선)
+            const smileLineCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.21, 0.062, -0.048),
+                new THREE.Vector3(-0.11, -0.008, 0.015),
+                new THREE.Vector3(0, -0.026, 0.036),
+                new THREE.Vector3(0.11, -0.008, 0.015),
+                new THREE.Vector3(0.21, 0.062, -0.048)
+            ]);
+            const smileLineMesh = new THREE.Mesh(
+                new THREE.TubeGeometry(smileLineCurve, 32, 0.013, 10, false),
+                smileCreaseMat
+            );
+            lipsGroup.add(smileLineMesh);
+
+            // 2) 윗입술 (자연스러운 스마일 아치)
+            const upperLipCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.195, 0.058, -0.042),
+                new THREE.Vector3(-0.08, 0.028, 0.025),
+                new THREE.Vector3(0, 0.016, 0.038),
+                new THREE.Vector3(0.08, 0.028, 0.025),
+                new THREE.Vector3(0.195, 0.058, -0.042)
+            ]);
+            const upperLip = new THREE.Mesh(
+                new THREE.TubeGeometry(upperLipCurve, 32, 0.028, 12, false),
+                lipMat
+            );
+            lipsGroup.add(upperLip);
+
+            // 3) 아랫입술 (도톰하고 환한 스마일 곡선)
+            const lowerLipCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.19, 0.054, -0.042),
+                new THREE.Vector3(-0.09, -0.040, 0.018),
+                new THREE.Vector3(0, -0.065, 0.036),
+                new THREE.Vector3(0.09, -0.040, 0.018),
+                new THREE.Vector3(0.19, 0.054, -0.042)
+            ]);
+            const lowerLip = new THREE.Mesh(
+                new THREE.TubeGeometry(lowerLipCurve, 32, 0.036, 12, false),
+                lipMat
+            );
+            lipsGroup.add(lowerLip);
+
+            // 4) 귀여운 입꼬리 끝 보조개 포인트
+            [-1, 1].forEach((dir) => {
+                const cornerTip = new THREE.Mesh(new THREE.SphereGeometry(0.016, 12, 12), smileCreaseMat);
+                cornerTip.position.set(dir * 0.214, 0.068, -0.050);
+                lipsGroup.add(cornerTip);
+            });
+
+            const lipZone = new THREE.Mesh(
+                new THREE.SphereGeometry(0.24, 16, 16),
+                new THREE.MeshBasicMaterial({ visible: false })
+            );
+            lipZone.scale.set(1.22, 0.78, 0.85);
+            lipZone.userData.forbidden = 'lips';
+            lipsGroup.add(lipZone);
+            eyeHitZones.push(lipZone);
+            characterGroup.add(lipsGroup);
+
+            // --- C. 게임 스테이지 내 3D 토리든 병 & 움직이는 스포이드 ---
+            const bottleAsset = createTorridenBottle();
+            const gameBottle = bottleAsset.productGroup;
+            const gameDropper = bottleAsset.dropperGroup;
+            gameBottle.scale.setScalar(0.55);
+            gameBottle.position.set(1.68, -1.25, 0.35);
+            gameBottle.rotation.y = -0.35;
+            scene.add(gameBottle);
+
+            const capHitMesh = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.65, 0.65, 1.5, 16),
+                new THREE.MeshBasicMaterial({ visible: false })
+            );
+            capHitMesh.position.y = 2.55;
+            gameDropper.add(capHitMesh);
+
+            const activeDropper = gameDropper.clone();
+            activeDropper.scale.setScalar(0.45);
+            activeDropper.visible = false;
+            activeDropper.children.forEach((ch) => {
+                ch.position.y -= 0.30;
+            });
+            scene.add(activeDropper);
+
+            // --- D. 발리는 세럼 방울(3D Droplets) & 반짝이(Twinkle) 파티클 풀 ---
+            const dropletPool = [];
+            const dropletGeo = new THREE.SphereGeometry(0.045, 16, 16);
+            const dropletMat = new THREE.MeshPhysicalMaterial({
+                color: 0x70d2ff,
+                roughness: 0.05,
+                transmission: 0.7,
+                transparent: true,
+                opacity: 0.9,
+                ior: 1.33,
+                clearcoat: 1.0
+            });
+
+            function spawnSerumDroplet(worldPos, normal) {
+                const drop = new THREE.Mesh(dropletGeo, dropletMat.clone());
+                drop.position.copy(worldPos).addScaledVector(normal, 0.025);
+                const s = 0.6 + Math.random() * 0.7;
+                drop.scale.set(s, s * 0.65, s);
+                drop.lookAt(worldPos.clone().add(normal));
+                scene.add(drop);
+                dropletPool.push({ mesh: drop, life: 1.0 });
+            }
+
+            const starPool = [];
+            const starGeo = new THREE.OctahedronGeometry(0.06, 0);
+            const starMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true });
+            function spawnWinTwinkles() {
+                for (let i = 0; i < 42; i++) {
+                    const star = new THREE.Mesh(starGeo, starMat.clone());
+                    star.material.color.setHex(i % 2 === 0 ? 0xffffff : 0x38bdf8);
+                    const angle = Math.random() * Math.PI * 2;
+                    const rad = 0.8 + Math.random() * 1.1;
+                    star.position.set(
+                        characterGroup.position.x + Math.cos(angle) * rad,
+                        characterGroup.position.y + (Math.random() - 0.5) * 2.0,
+                        0.6 + Math.random() * 0.8
+                    );
+                    scene.add(star);
+                    starPool.push({
+                        mesh: star,
+                        vy: 0.008 + Math.random() * 0.015,
+                        rot: (Math.random() - 0.5) * 0.1,
+                        phase: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+
+            // --- E. 게임 상태 & 피부 도포 추적 로직 ---
+            let gameState = 'STEP1_CAP';
+            let isPointerDown = false;
+            let capOpenAnim = 0;
+            let lastSpawnTime = 0;
+            let warningTimer = null;
+
+            const zoneTrackers = {
+                forehead: { hits: new Set(), target: 14 },
+                nose: { hits: new Set(), target: 8 },
+                leftCheek: { hits: new Set(), target: 16 },
+                rightCheek: { hits: new Set(), target: 16 },
+                chin: { hits: new Set(), target: 12 }
+            };
+
+            function resetSkinCanvas() {
+                skinCtx.fillStyle = '#f8d3be';
+                skinCtx.fillRect(0, 0, texSize, texSize);
+
+                // 웃는 얼굴에 어울리는 생기 있고 따뜻한 볼 홍조
+                const drawBlush = (bx, by) => {
+                    const g = skinCtx.createRadialGradient(bx, by, 12, bx, by, 78);
+                    g.addColorStop(0, 'rgba(246, 140, 138, 0.36)');
+                    g.addColorStop(1, 'rgba(246, 140, 138, 0)');
+                    skinCtx.fillStyle = g;
+                    skinCtx.fillRect(bx - 82, by - 82, 164, 164);
+                };
+                drawBlush(texSize * 0.63, texSize * 0.56);
+                drawBlush(texSize * 0.87, texSize * 0.56);
+
+                roughCtx.fillStyle = '#d6d6d6';
+                roughCtx.fillRect(0, 0, 512, 512);
+
+                skinTexture.needsUpdate = true;
+                roughTexture.needsUpdate = true;
+                headMat.clearcoat = 0.0;
+                noseMat.clearcoat = 0.0;
+                noseMat.roughness = 0.72;
+            }
+
+            function paintSerumOnSkin(uv) {
+                const x = uv.x * texSize;
+                const y = (1 - uv.y) * texSize;
+
+                const grad = skinCtx.createRadialGradient(x, y, 4, x, y, 56);
+                grad.addColorStop(0, 'rgba(130, 218, 255, 0.55)');
+                grad.addColorStop(0.55, 'rgba(175, 234, 255, 0.28)');
+                grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                skinCtx.fillStyle = grad;
+                skinCtx.beginPath();
+                skinCtx.arc(x, y, 56, 0, Math.PI * 2);
+                skinCtx.fill();
+
+                skinCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+                skinCtx.beginPath();
+                skinCtx.arc(x + (Math.random() - 0.5) * 26, y + (Math.random() - 0.5) * 26, 4 + Math.random() * 4, 0, Math.PI * 2);
+                skinCtx.fill();
+
+                skinTexture.needsUpdate = true;
+
+                const rx = uv.x * 512;
+                const ry = (1 - uv.y) * 512;
+                const rGrad = roughCtx.createRadialGradient(rx, ry, 2, rx, ry, 28);
+                rGrad.addColorStop(0, 'rgba(24, 24, 24, 0.85)');
+                rGrad.addColorStop(1, 'rgba(24, 24, 24, 0)');
+                roughCtx.fillStyle = rGrad;
+                roughCtx.beginPath();
+                roughCtx.arc(rx, ry, 28, 0, Math.PI * 2);
+                roughCtx.fill();
+                roughTexture.needsUpdate = true;
+            }
+
+            function recordZoneCoverage(localPt) {
+                if (localPt.z < 0.25) return;
+
+                const qx = Math.round(localPt.x * 10);
+                const qy = Math.round(localPt.y * 10);
+                const key = `${qx},${qy}`;
+
+                if (localPt.y > 0.36 && Math.abs(localPt.x) < 0.72) {
+                    zoneTrackers.forehead.hits.add(key);
+                } else if (Math.abs(localPt.x) <= 0.19 && localPt.y >= -0.18 && localPt.y <= 0.36) {
+                    zoneTrackers.nose.hits.add(key);
+                    noseMat.clearcoat = 0.85;
+                    noseMat.roughness = 0.18;
+                } else if (localPt.x < -0.22 && localPt.y >= -0.38 && localPt.y <= 0.34) {
+                    zoneTrackers.leftCheek.hits.add(key);
+                } else if (localPt.x > 0.22 && localPt.y >= -0.38 && localPt.y <= 0.34) {
+                    zoneTrackers.rightCheek.hits.add(key);
+                } else if (localPt.y < -0.35 && localPt.y > -0.92 && Math.abs(localPt.x) < 0.65) {
+                    zoneTrackers.chin.hits.add(key);
+                }
+
+                updateGameProgressUI();
+            }
+
+            function updateGameProgressUI() {
+                let totalPct = 0;
+                const keys = Object.keys(zoneTrackers);
+
+                keys.forEach((k) => {
+                    const z = zoneTrackers[k];
+                    const pct = Math.min(100, Math.round((z.hits.size / z.target) * 100));
+                    totalPct += pct;
+
+                    const el = zoneEls[k];
+                    const badge = el.querySelector('.zone-badge');
+                    if (pct >= 100) {
+                        el.className = 'flex items-center justify-between p-3 rounded-xl bg-torriden-50 border border-torriden-200 transition-all' + (k === 'chin' ? ' col-span-2' : '');
+                        badge.textContent = '완료 ✓';
+                        badge.className = 'zone-badge text-torriden-600 font-extrabold';
+                    } else {
+                        badge.textContent = `${pct}%`;
+                        badge.className = 'zone-badge text-torriden-500 font-bold';
+                    }
+                });
+
+                const overall = Math.min(100, Math.round(totalPct / keys.length));
+                progressBarEl.style.width = `${overall}%`;
+                progressTextEl.textContent = `${overall}%`;
+                headMat.clearcoat = (overall / 100) * 0.95;
+
+                if (overall >= 100 && gameState === 'STEP2_APPLY') {
+                    triggerWin();
+                }
+            }
+
+            function triggerWin() {
+                gameState = 'WIN';
+                isPointerDown = false;
+                activeDropper.visible = false;
+                stepTextEl.textContent = '✨ 얼굴 구석구석 수분 충전 완료!';
+                spawnWinTwinkles();
+
+                winOverlayEl.classList.remove('opacity-0', 'pointer-events-none');
+                winCardEl.classList.add('animate-twinkle-pop');
+            }
+
+            function showForbiddenWarning(type) {
+                warningToastEl.textContent = type === 'eye'
+                    ? '👀 눈은 예민해요! 눈을 피해 발라주세요!'
+                    : '👄 입술을 피해 피부에만 발라주세요!';
+                warningToastEl.classList.remove('opacity-0');
+                characterGroup.rotation.z = 0.06;
+                setTimeout(() => { characterGroup.rotation.z = -0.06; }, 70);
+                setTimeout(() => { characterGroup.rotation.z = 0; }, 140);
+
+                clearTimeout(warningTimer);
+                warningTimer = setTimeout(() => {
+                    warningToastEl.classList.add('opacity-0');
+                }, 1400);
+            }
+
+            function resetGame() {
+                gameState = 'STEP1_CAP';
+                isPointerDown = false;
+                capOpenAnim = 0;
+                gameDropper.visible = true;
+                gameDropper.position.y = 0;
+                gameDropper.rotation.y = 0;
+                activeDropper.visible = false;
+                capHintEl.classList.remove('hidden');
+                characterGroup.rotation.set(0, 0, 0);
+                eyeGroups.forEach((eg) => { eg.scale.y = 1; });
+
+                stepTextEl.textContent = 'STEP 1. 오른쪽 아래 세럼 뚜껑을 클릭해서 열어주세요!';
+                progressBarEl.style.width = '0%';
+                progressTextEl.textContent = '0%';
+
+                chkCapEl.querySelector('.chk-icon').textContent = '1';
+                chkCapEl.querySelector('.chk-status').textContent = '대기중';
+                chkCapEl.querySelector('.chk-status').className = 'chk-status text-xs font-bold text-torriden-500';
+
+                Object.keys(zoneTrackers).forEach((k) => {
+                    zoneTrackers[k].hits.clear();
+                    const el = zoneEls[k];
+                    el.className = 'flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 transition-all' + (k === 'chin' ? ' col-span-2' : '');
+                    const badge = el.querySelector('.zone-badge');
+                    badge.textContent = '0%';
+                    badge.className = 'zone-badge text-gray-400 font-bold';
+                });
+
+                winOverlayEl.classList.add('opacity-0', 'pointer-events-none');
+                winCardEl.classList.remove('animate-twinkle-pop');
+
+                starPool.forEach((s) => scene.remove(s.mesh));
+                starPool.length = 0;
+                dropletPool.forEach((d) => scene.remove(d.mesh));
+                dropletPool.length = 0;
+
+                resetSkinCanvas();
+            }
+
+            resetSkinCanvas();
+
+            // --- F. 포인터 인터랙션 ---
+            const raycaster = new THREE.Raycaster();
+            const pointer = new THREE.Vector2();
+
+            function updatePointer(e) {
+                const rect = renderer.domElement.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+                pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            }
+
+            function handleStep1Click(e) {
+                updatePointer(e);
+                raycaster.setFromCamera(pointer, camera);
+                const hits = raycaster.intersectObjects([capHitMesh, gameBottle], true);
+                if (hits.length > 0) {
+                    gameState = 'OPENING';
+                    capHintEl.classList.add('hidden');
+                    stepTextEl.textContent = '뚜껑이 열리고 있어요...';
+                }
+            }
+
+            function handleApplySerum(e) {
+                updatePointer(e);
+                raycaster.setFromCamera(pointer, camera);
+
+                const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -1.3);
+                const targetPos = new THREE.Vector3();
+                raycaster.ray.intersectPlane(plane, targetPos);
+                if (targetPos) {
+                    activeDropper.position.lerp(targetPos, 0.45);
+                    activeDropper.rotation.z = -0.35;
+                    activeDropper.rotation.x = 0.25;
+                }
+
+                if (!isPointerDown) return;
+
+                const forbiddenHits = raycaster.intersectObjects(eyeHitZones, false);
+                if (forbiddenHits.length > 0) {
+                    showForbiddenWarning(forbiddenHits[0].object.userData.forbidden);
+                    return;
+                }
+
+                const skinHits = raycaster.intersectObjects([headMesh, noseMesh], false);
+                if (skinHits.length > 0) {
+                    const hit = skinHits[0];
+                    if (hit.object === headMesh && hit.uv) {
+                        paintSerumOnSkin(hit.uv);
+                        const localPt = headMesh.worldToLocal(hit.point.clone());
+                        recordZoneCoverage(localPt);
+                    } else if (hit.object === noseMesh) {
+                        recordZoneCoverage(new THREE.Vector3(0, -0.05, 0.9));
+                    }
+
+                    const now = performance.now();
+                    if (now - lastSpawnTime > 55) {
+                        lastSpawnTime = now;
+                        const worldNormal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+                        spawnSerumDroplet(hit.point, worldNormal);
+                    }
+                }
+            }
+
+            const dom = renderer.domElement;
+            dom.addEventListener('pointerdown', (e) => {
+                if (gameState === 'STEP1_CAP') {
+                    handleStep1Click(e);
+                } else if (gameState === 'STEP2_APPLY') {
+                    isPointerDown = true;
+                    handleApplySerum(e);
+                }
+            });
+
+            dom.addEventListener('pointermove', (e) => {
+                if (gameState === 'STEP2_APPLY') {
+                    handleApplySerum(e);
+                }
+            });
+
+            window.addEventListener('pointerup', () => {
+                isPointerDown = false;
+            });
+
+            document.getElementById('btn-game-reset').addEventListener('click', resetGame);
+            document.getElementById('btn-game-replay').addEventListener('click', resetGame);
+
+            new ResizeObserver(() => {
+                if (!container.clientWidth || !container.clientHeight) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }).observe(container);
+
+            // --- G. 게임 애니메이션 루프 ---
+            const gClock = new THREE.Clock();
+            function animateGame() {
+                requestAnimationFrame(animateGame);
+                const t = gClock.getElapsedTime();
+
+                if (gameState !== 'WIN') {
+                    characterGroup.position.y = 0.15 + Math.sin(t * 1.8) * 0.015;
+                } else {
+                    // 완료 시 기분 좋은 눈웃음 & 살짝 신난 리듬감
+                    characterGroup.rotation.y = Math.sin(t * 2.0) * 0.14;
+                    characterGroup.position.y = 0.15 + Math.abs(Math.sin(t * 3.2)) * 0.035;
+                    eyeGroups.forEach((eg) => { eg.scale.y = 0.85; });
+                }
+
+                if (gameState === 'OPENING') {
+                    capOpenAnim += 0.035;
+                    gameDropper.position.y = capOpenAnim * 1.4;
+                    gameDropper.rotation.y = capOpenAnim * Math.PI * 2;
+                    if (capOpenAnim >= 1.0) {
+                        gameState = 'STEP2_APPLY';
+                        gameDropper.visible = false;
+                        activeDropper.visible = true;
+                        activeDropper.position.set(0.7, 0.4, 1.3);
+                        stepTextEl.textContent = 'STEP 2. 눈과 입술을 피해 얼굴 구석구석 문질러 발라주세요!';
+                        chkCapEl.querySelector('.chk-icon').textContent = '✓';
+                        chkCapEl.querySelector('.chk-status').textContent = '열림 완료';
+                        chkCapEl.querySelector('.chk-status').className = 'chk-status text-xs font-extrabold text-torriden-600';
+                    }
+                }
+
+                for (let i = dropletPool.length - 1; i >= 0; i--) {
+                    const d = dropletPool[i];
+                    d.life -= 0.025;
+                    d.mesh.scale.multiplyScalar(1.018);
+                    d.mesh.material.opacity = Math.max(0, d.life * 0.9);
+                    if (d.life <= 0) {
+                        scene.remove(d.mesh);
+                        dropletPool.splice(i, 1);
+                    }
+                }
+
+                starPool.forEach((s) => {
+                    s.mesh.position.y += s.vy;
+                    s.mesh.rotation.y += s.rot;
+                    s.mesh.rotation.x += s.rot;
+                    const pulse = 0.7 + Math.sin(t * 6 + s.phase) * 0.45;
+                    s.mesh.scale.setScalar(pulse);
+                    if (s.mesh.position.y > 1.8) s.mesh.position.y = -1.0;
+                });
+
+                renderer.render(scene, camera);
+            }
+            animateGame();
+        })();
+    </script>
+</body>
+</html>
